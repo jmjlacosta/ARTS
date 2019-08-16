@@ -1,0 +1,44 @@
+proc gplot data=work;
+plot TotalPrice*Carat;
+run;
+
+data diamonds;
+set work;
+Caratsq = Carat*Carat;
+Caratcb = Carat*Carat*Carat;
+Depthsq = Depth*Depth;
+CaratDepth = Carat*Depth;
+logPrice = log(TotalPrice);
+run;
+
+proc reg data=diamonds;
+model TotalPrice=Carat Caratsq ;
+run;
+
+proc reg data=diamonds;
+model TotalPrice=Carat Caratsq Caratcb;
+run;
+
+proc reg data=diamonds;|
+model TotalPrice=Depth Depthsq;
+run;
+
+proc reg data=diamonds;
+model TotalPrice=Carat Depth;
+run;
+
+proc reg data=diamonds;
+model TotalPrice=Carat Depth CaratDepth;
+run;
+
+proc reg data=diamonds;
+model TotalPrice=Carat Caratsq Depth Depthsq CaratDepth;
+run;
+
+proc reg data=diamonds;
+model logPrice=Carat Caratsq Depth Depthsq CaratDepth;
+run;
+
+proc reg data=diamonds;
+model logPrice=Carat Caratsq/ clb cli clm;
+run;

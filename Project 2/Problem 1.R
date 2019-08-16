@@ -1,0 +1,20 @@
+area <- data1$Area
+species <- data1$Species
+areagroup <- data1$Areagroup
+boxplot(species ~ area)
+model <- lm(species ~ area)
+plot(area,species)
+abline(model)
+summary(model)
+model <- lm(log(species) ~ log(area))
+plot(log(area), log(species))
+abline(model)
+summary(model)
+fit <- lm(log(species) ~ areagroup)
+summary(fit)
+anova(model)
+anova(model, fit)
+plot(resid(model)~log(area))
+plot(resid(model)~fitted(model))
+hist(resid(model))
+qqnorm(resid(model))

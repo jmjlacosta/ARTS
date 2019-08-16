@@ -1,0 +1,16 @@
+data ford;
+input speed $ make $ y total @@;
+datalines;
+1 ford 0.5 172  1 other 2.5 468  2 ford 0.5 244  2 other 3.5 757  3 ford 3 101  3 other 3 328  4 ford 21 129  4 other 8 281
+;
+run;
+
+proc genmod data=ford;
+class speed make;
+model y/total=make speed/dist=bin type3 lrci residuals obstats;
+run;
+
+proc logistic;
+class speed make/param=ref;
+model y/total=make speed/aggregate scale=none clparm=both clodds=both;
+run;

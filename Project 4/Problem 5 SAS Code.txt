@@ -1,0 +1,50 @@
+proc print data=VOTE;
+run;
+proc reg data=VOTE;
+model voteA=prtystrA democA lexpendA lexpendB;
+output out=b r=residual;
+run;
+proc print data=b;
+run;
+proc reg data=b;
+model residual=prtystrA democA lexpendA lexpendB;
+output out=b r=residual;
+run;
+proc model data=VOTE;
+parms b0 b1 b2 b3 b4;
+voteA=b0+b1*prtystrA+b2*democA+b3*lexpendA+b4*lexpendB;
+fit voteA/white breusch=(1 prtystrA democA lexpendA lexpendB) hccme=0;
+run; 
+proc print data=smoke;
+run;
+data smoke;
+set smoke;
+smokes = ifn(cigs>0,1,0);
+run;
+proc print data=smoke;
+run;
+proc robustreg data=smoke;
+model smokes=lcigpric lincome educ age agesq restaurn white;
+run;
+proc reg data=smoke;
+model smokes=lcigpric lincome educ age agesq restaurn white /acov;
+ods output  ACovEst = estcov;
+ods output ParameterEstimates=pest;
+run;
+quit;
+data temp_dm;
+  set estcov;
+  drop model dependent;
+  array a(5) intercept lcigpric lincome educ age agesq restaurn white;
+  array b(5) std1-std5;
+  b(_n_) = sqrt((395/390)*a(_n_));
+  std = max(of std1-std5);
+  keep variable std;
+run;
+proc sql;
+  select pest.variable, estimate, stderr, tvalue, probt, std as robust_stderr, 
+         estimate/robust_stderr as tvalue_rb, 
+         (1 - probt(abs(estimate/robust_stderr), 394))*2 as probt_rb 
+  from pest, temp_dm
+  where pest.variable=temp_dm.variable;
+quit;

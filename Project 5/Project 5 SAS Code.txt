@@ -1,0 +1,132 @@
+*Problem 1;
+
+ods html;
+ods graphics on; 
+
+proc print data=energy;
+run;
+
+proc autoreg data=energy;
+model y=time timesq Q1 Q2 Q3/dwprob;
+output out=results p=yhat residual=resid lclm=LowerCI uclm=UpperCI lcl=LowerPI ucl=UpperPI;
+run;
+
+proc print data=results;
+run;
+
+proc arima data=energy;
+identify var=y crosscorr=(y time timesq Q1 Q2 Q3) noprint; 
+estimate p=(1) input=(time timesq Q1 Q2 Q3) printall plot;
+forecast lead=4 out=fcast;
+run;
+
+proc print data=fcast;
+run;	
+
+ods graphics off;
+ods html;
+
+*Problem 2;
+
+ods html;
+ods graphics on;
+
+proc print data=japan;
+run;
+
+proc autoreg data=japan plots=(acf pacf);
+model y=time/nlag=1 dwprob method=uls; 
+output out=results p=yhat residual=resid lclm=LowerCI uclm=UpperCI lcl=LowerPI ucl=UpperPI;
+run;
+
+proc print data=results;
+run;
+
+ods graphics off;
+ods html;
+
+*Problem 3;
+
+ods html; 
+ods graphics on;
+
+proc autoreg data=qhotel;
+model quarty=time M1 M2 M3 M4 M5 M6 M7 M8 M9 M10 M11/dwprob;
+output out=results p=yhat residual=resid lclm=LowerCI uclm=UpperCI lcl=LowerPI ucl=UpperPI;
+run;
+
+proc print data=results;
+run; 
+
+ods graphics off;
+ods html;
+
+
+*Problem 4;
+
+ods html;
+ods graphics on;
+
+proc arima data=japan;
+identify var=y crosscorr=(time) noprint;
+estimate p=(1) input=(time) printall plot;
+forecast lead=10 out=fcast;
+run;	
+
+proc arima data=japan;
+identify var=y crosscorr=(time) noprint;
+estimate p=(1,2) input=(time) printall plot;
+forecast lead=10 out=fcast;
+run;
+
+proc arima data=japan;
+identify var=y crosscorr=(time) noprint;
+estimate p=(1) q=(1) input=(time) printall plot;
+forecast lead=10 out=fcast;
+run;
+
+proc arima data=japan;
+identify var=y crosscorr=(time) noprint;
+estimate q=(1) input=(time) printall plot;
+forecast lead=10 out=fcast;
+run;
+
+proc arima data=japan;
+identify var=y crosscorr=(time) noprint;
+estimate q=(1,2) input=(time) printall plot;
+forecast lead=10 out=fcast;
+run;
+
+proc arima data=japan;
+identify var=y crosscorr=(time) noprint;
+estimate p=(1,2) q=(1) input=(time) printall plot;
+forecast lead=10 out=fcast;
+run;
+
+ods graphics off;
+ods html;
+
+
+*Problem 5;
+
+ods html; 
+ods graphics on;
+
+proc arima data=tooth;
+identify var=y;
+identify var=y(1);
+run;
+
+ods graphics off;
+ods html; 
+Problem 6:
+ods html;
+ods graphics on; 
+
+proc arima data=visc;
+identify var=y; 
+identify var=y(1);
+run;
+
+ods graphics off;
+ods html;

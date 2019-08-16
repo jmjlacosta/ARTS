@@ -1,0 +1,6 @@
+library(tesseract)
+eng <- tesseract("eng")
+text <- tesseract::ocr("Problem 7 Diamonds SAS1.png", engine = eng)
+cat(text)
+text <- tesseract::ocr("Problem 7 Diamonds SAS2.png", engine = eng)
+cat(text)
